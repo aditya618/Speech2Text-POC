@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>S2T</title>
+    <style>
+        body {
+            padding: 0;
+            margin: 0;
+            height: 100vh;
+        }
+        .main {
+            height: 210px;
+            width: 210px;
+            margin: 0 auto;
+        }
+        #btn {
+            padding: 12%;
+            border-radius: 50%;
+            background: red;
+            outline: none;
+            color: white;
+            font-size: 25px;
+            border: none;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        #btn:hover {
+            box-shadow: 1px 1px 6px 1px black;
+            text-shadow: 1px 1px black;
+        }
+
+        .trans{
+            margin: 20px auto;
+            width: 10%;
+        }
+
+        #result-box {
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        #result {
+            border: 1px dashed lightgrey;
+            width: 100%;
+            height: 27vh;
+            padding: 20px;
+            margin: 0 auto;
+            resize: none;
+            outline: none;
+        }
+
+        #copy {
+            width: 76px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="main">
+        <button id="btn">Record</button>
+    </div>
+    <hr />
+    <div id="result-box">
+        <h4 class="trans">Transcription</h4>
+        <textarea  id="result">record to transcript..</textarea>
+    </div>
+    <div id="copy">
+        <button id="copyBtn" onclick="copyText()">Copy Text</button>
+    </div>
+    <script>
+        const result = document.querySelector('#result');
+        const btn = document.querySelector('#btn');
+        const copyBtn = document.querySelector('#copyBtn');
+        const speechRecognition = window.webkitSpeechRecognition;
+        const recognition = new speechRecognition();
+
+        // recognition.continuous = true;
+
+        recognition.onresult = (event) => {
+            result.innerHTML = event.results[0][0]['transcript']
+        }
+
+        recognition.onstart = () => {
+            btn.innerHTML = 'Recording...'
+        }
+
+        recognition.onspeechend = () => {
+            btn.innerHTML = 'Recording Ended.'
+            setTimeout(() => {
+                btn.innerHTML = 'Record'
+            },2000);
+        }
+
+        recognition.onerror = () => {
+            btn.innerHTML = 'Some error occured! try again.'
+            setTimeout(() => {
+                btn.innerHTML = 'Record'
+            },2000);
+        }
+
+
+        btn.addEventListener('click', () => {
+            recognition.start();
+        });
+
+        function copyText() {
+            const copyText = result;
+            copyText.select();
+            copyText.setSelectionRange(0, 99999)
+            document.execCommand("copy");
+            copyBtn.innerText = 'Copied!!'
+            setTimeout(() => {
+                copyBtn.innerHTML = 'Copy Text'
+            },3000);
+        }
+
+    </script>
+</body>
+</html>
